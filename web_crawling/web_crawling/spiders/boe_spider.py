@@ -6,39 +6,39 @@ from w3lib.html import remove_tags
 
 class BoeSpider(scrapy.Spider):
     name = "boe_spider"
-    start_urls = [
-        f"https://boe.es/boe/dias/2020/11/{day}/"
-        for day in [
-            "03",
-            "04",
-            "05",
-            "06",
-            "07",
-            "09",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-            "26",
-            "27",
-            "28",
-            "29",
-            "30",
-        ]
-    ]
-    # start_urls = ['https://boe.es/diario_boe/ultimo.php']
+    # start_urls = [
+    #     f"https://boe.es/boe/dias/2020/11/{day}/"
+    #     for day in [
+    #         "03",
+    #         "04",
+    #         "05",
+    #         "06",
+    #         "07",
+    #         "09",
+    #         "10",
+    #         "11",
+    #         "12",
+    #         "13",
+    #         "14",
+    #         "15",
+    #         "16",
+    #         "17",
+    #         "18",
+    #         "19",
+    #         "20",
+    #         "21",
+    #         "22",
+    #         "23",
+    #         "24",
+    #         "25",
+    #         "26",
+    #         "27",
+    #         "28",
+    #         "29",
+    #         "30",
+    #     ]
+    # ]
+    start_urls = ["https://boe.es/diario_boe/ultimo.php"]
 
     def parse(self, response):
         for dispo in response.css(".puntoHTML > a::attr('href')").extract():
