@@ -41,14 +41,15 @@ class BoeSpider(scrapy.Spider):
     start_urls = ["https://boe.es/diario_boe/ultimo.php"]
 
     def parse(self, response):
-        for dispo in response.css(".puntoHTML > a::attr('href')").extract():
-            url = response.urljoin(dispo).replace("/txt.php", "/xml.php")
-            yield scrapy.Request(url, callback=self.save_xml_dispo)
+        for disposition in response.css(".puntoHTML > a::attr('href')").extract():
+            url = response.urljoin(disposition).replace("/txt.php", "/xml.php")
+            yield scrapy.Request(url, callback=self.save_xml_disposition)
 
-    def save_xml_dispo(self, response):
+    def save_xml_disposition(self, response):
         tags = {
-            "documento": response.xpath("//documento/text()").get(),
-            "metadatos": response.xpath("//metadatos/text()").get(),
+            "fecha_actualizacion": response.xpath(
+                "//documento/@fecha_actualizacion"
+            ).get(),  # Revisar. No tiene texto, pero sí etiqueta fecha_actualizacion
             "identificador": response.xpath("//identificador/text()").get(),
             "titulo": response.xpath("//titulo/text()").get(),
             "diario": response.xpath("//diario/@codigo").get()
@@ -57,7 +58,9 @@ class BoeSpider(scrapy.Spider):
             "seccion": response.xpath("//seccion/text()").get(),
             "subseccion": response.xpath("//subseccion/text()").get(),
             "departamento": response.xpath("//departamento/text()").get(),
+            "departamento_codigo": response.xpath("//departamento/@codigo").get(),
             "rango": response.xpath("//rango/text()").get(),
+            "rango_codigo": response.xpath("//rango/@codigo").get(),
             "numero_oficial": response.xpath("//numero_oficial/text()").get(),
             "fecha_disposicion": response.xpath("//fecha_disposicion/text()").get(),
             "fecha_publicacion": response.xpath("//fecha_publicacion/text()").get(),
@@ -76,9 +79,15 @@ class BoeSpider(scrapy.Spider):
                 "//suplemento_pagina_final/text()"
             ).get(),
             "estatus_legislativo": response.xpath("//estatus_legislativo/text()").get(),
+            "estatus_legislativo_codigo": response.xpath(
+                "//estatus_legislativo/@codigo"
+            ).get(),
             "origen_legislativo": response.xpath("//origen_legislativo/text()").get(),
             "estado_consolidacion": response.xpath(
                 "//estado_consolidacion/text()"
+            ).get(),
+            "estado_consolidacion_codigo": response.xpath(
+                "//estado_consolidacion/@codigo"
             ).get(),
             "judicialmente_anulada": response.xpath(
                 "//judicialmente_anulada/text()"
