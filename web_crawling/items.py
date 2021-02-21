@@ -4,9 +4,13 @@
 # https://docs.scrapy.org/en/latest/topics/items.html
 
 import scrapy
+from scrapy_sqlitem import SqlItem
+from db.models.boe_disposition import BoeDisposition, Departamento
 
 
-class WebCrawlingItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+class BoeDispositionItem(SqlItem):
+    sqlmodel = BoeDisposition
+
+
+class DepartamentoItem(SqlItem):
+    sqlmodel = Departamento

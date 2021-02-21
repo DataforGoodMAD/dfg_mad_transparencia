@@ -1,7 +1,10 @@
+from db.models.departamento import Departamento
 import scrapy
 import json
 import os
 from w3lib.html import remove_tags
+from scrapy.loader import ItemLoader
+from web_crawling.items import BoeDispositionItem, DepartamentoItem
 
 
 class BoeSpider(scrapy.Spider):
@@ -46,6 +49,12 @@ class BoeSpider(scrapy.Spider):
             yield scrapy.Request(url, callback=self.save_xml_disposition)
 
     def save_xml_disposition(self, response):
+        departamento = DepartamentoItem(
+            departamento_nombre=response.xpath("//departamento/text()").get(),
+            departamento_codigo=response.xpath("//departamento/@codigo").get(),
+        )
+        yield departamento
+
         tags = {
             "fecha_actualizacion": response.xpath(
                 "//documento/@fecha_actualizacion"
@@ -55,44 +64,44 @@ class BoeSpider(scrapy.Spider):
             "diario": response.xpath("//diario/@codigo").get()
             or response.xpath("//diario/text()").get(),
             "diario_numero": response.xpath("//diario_numero/text()").get(),
-            "seccion": response.xpath("//seccion/text()").get(),
-            "subseccion": response.xpath("//subseccion/text()").get(),
-            "departamento": response.xpath("//departamento/text()").get(),
+            # "seccion": response.xpath("//seccion/text()").get(),
+            # "subseccion": response.xpath("//subseccion/text()").get(),
+            # "departamento": response.xpath("//departamento/text()").get(),
             "departamento_codigo": response.xpath("//departamento/@codigo").get(),
-            "rango": response.xpath("//rango/text()").get(),
-            "rango_codigo": response.xpath("//rango/@codigo").get(),
-            "numero_oficial": response.xpath("//numero_oficial/text()").get(),
+            # "rango": response.xpath("//rango/text()").get(),
+            # "rango_codigo": response.xpath("//rango/@codigo").get(),
+            # "numero_oficial": response.xpath("//numero_oficial/text()").get(),
             "fecha_disposicion": response.xpath("//fecha_disposicion/text()").get(),
             "fecha_publicacion": response.xpath("//fecha_publicacion/text()").get(),
             "fecha_vigencia": response.xpath("//fecha_vigencia/text()").get(),
             "fecha_derogacion": response.xpath("//fecha_derogacion/text()").get(),
-            "letra_imagen": response.xpath("//letra_imagen/text()").get(),
+            # "letra_imagen": response.xpath("//letra_imagen/text()").get(),
             "pagina_inicial": response.xpath("//pagina_inicial/text()").get(),
             "pagina_final": response.xpath("//pagina_final/text()").get(),
-            "suplemento_letra_imagen": response.xpath(
-                "//suplemento_letra_imagen/text()"
-            ).get(),
-            "suplemento_pagina_inicial": response.xpath(
-                "//suplemento_pagina_inicial/text()"
-            ).get(),
-            "suplemento_pagina_final": response.xpath(
-                "//suplemento_pagina_final/text()"
-            ).get(),
-            "estatus_legislativo": response.xpath("//estatus_legislativo/text()").get(),
-            "estatus_legislativo_codigo": response.xpath(
-                "//estatus_legislativo/@codigo"
-            ).get(),
-            "origen_legislativo": response.xpath("//origen_legislativo/text()").get(),
-            "estado_consolidacion": response.xpath(
-                "//estado_consolidacion/text()"
-            ).get(),
-            "estado_consolidacion_codigo": response.xpath(
-                "//estado_consolidacion/@codigo"
-            ).get(),
+            # "suplemento_letra_imagen": response.xpath(
+            #     "//suplemento_letra_imagen/text()"
+            # ).get(),
+            # "suplemento_pagina_inicial": response.xpath(
+            #     "//suplemento_pagina_inicial/text()"
+            # ).get(),
+            # "suplemento_pagina_final": response.xpath(
+            #     "//suplemento_pagina_final/text()"
+            # ).get(),
+            # "estatus_legislativo": response.xpath("//estatus_legislativo/text()").get(),
+            # "estatus_legislativo_codigo": response.xpath(
+            #     "//estatus_legislativo/@codigo"
+            # ).get(),
+            # "origen_legislativo": response.xpath("//origen_legislativo/text()").get(),
+            # "estado_consolidacion": response.xpath(
+            #     "//estado_consolidacion/text()"
+            # ).get(),
+            # "estado_consolidacion_codigo": response.xpath(
+            #     "//estado_consolidacion/@codigo"
+            # ).get(),
             "judicialmente_anulada": response.xpath(
                 "//judicialmente_anulada/text()"
             ).get(),
-            "vigencia_agotada": response.xpath("//vigencia_agotada/text()").get(),
+            # "vigencia_agotada": response.xpath("//vigencia_agotada/text()").get(),
             "estatus_derogacion": response.xpath("//estatus_derogacion/text()").get(),
             "url_epub": response.xpath("//url_epub/text()").get(),
             "url_pdf": response.xpath("//url_pdf/text()").get(),
@@ -112,12 +121,15 @@ class BoeSpider(scrapy.Spider):
             "texto": response.xpath("//texto").getall(),
             "images": response.xpath("//img/@src").getall(),
         }
-        # Add text with HTML tags removed
-        plain_text = [remove_tags(text, encoding="latin1") for text in tags["texto"]]
-        tags["texto_plano"] = plain_text
-        # Save to JSON file
-        path = f"../data/{tags['fecha_publicacion']}/{tags['seccion']}/{tags['subseccion']}/{tags['departamento']}"
-        filename = f"{tags['identificador']}.json"
-        os.makedirs(path, exist_ok=True)
-        with open(f"{path}/{filename}", "w") as file:
-            json.dump(tags, file)
+        disposition = BoeDispositionItem(**tags)
+        __import__('pdb').set_trace()
+        yield disposition
+        # # Add text with HTML tags removed
+        # plain_text = [remove_tags(text, encoding="latin1") for text in tags["texto"]]
+        # tags["texto_plano"] = plain_text
+        # # Save to JSON file
+        # path = f"../data/{tags['fecha_publicacion']}/{tags['seccion']}/{tags['subseccion']}/{tags['departamento']}"
+        # filename = f"{tags['identificador']}.json"
+        # os.makedirs(path, exist_ok=True)
+        # with open(f"{path}/{filename}", "w") as file:
+        #     json.dump(tags, file)
