@@ -6,8 +6,12 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
+from db.database import get_db, create_tables, engine
+
+create_tables()
 
 
-class WebCrawlingPipeline:
+class SaveToDBItemPipeline:
     def process_item(self, item, spider):
+        item.commit_item(engine=engine, excluded_fields=['id'])
         return item

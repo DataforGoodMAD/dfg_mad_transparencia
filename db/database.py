@@ -1,18 +1,23 @@
+import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
-from dotenv import load_dotenv
 
 load_dotenv()
 
-SQLALCHEMY_DATABASE_URL = (
-    "postgresql://POSTGRES_USERNAME:POSTGRES_PASSWORD@localhost/dfg_mad_transparencia"
+DB_HOST = os.getenv("DB_HOST")
+POSTGRES_DB = os.getenv("POSTGRES_DB")
+POSTGRES_USERNAME = os.getenv("POSTGRES_USERNAME")
+POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+
+DATABASE_URL = (
+    f"postgresql://{POSTGRES_USERNAME}:{POSTGRES_PASSWORD}@{DB_HOST}/{POSTGRES_DB}"
 )
 
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False},
+    DATABASE_URL,
     client_encoding="utf8",
 )
 
