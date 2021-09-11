@@ -1,0 +1,2 @@
+CREATE DATABASE boe_dev;
+CREATE DATABASE boe_test;

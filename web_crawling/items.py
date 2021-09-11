@@ -4,13 +4,11 @@
 # https://docs.scrapy.org/en/latest/topics/items.html
 
 import scrapy
-from scrapy_sqlitem import SqlItem
-from db.models.boe_disposition import BoeDisposition, Departamento
 
 
-class BoeDispositionItem(SqlItem):
-    sqlmodel = BoeDisposition
+class BoeDispositionItem:
+    pass
 
 
-class DepartamentoItem(SqlItem):
-    sqlmodel = Departamento
+class DepartamentoItem:
+    pass

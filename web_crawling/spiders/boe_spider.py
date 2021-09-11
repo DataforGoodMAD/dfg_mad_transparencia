@@ -44,7 +44,10 @@ class BoeSpider(scrapy.Spider):
     start_urls = ["https://boe.es/diario_boe/ultimo.php"]
 
     def parse(self, response):
-        for disposition in response.css(".puntoHTML > a::attr('href')").extract():
+        dispositions_list = response.css(
+            ".puntoHTML > a::attr('href')"
+        ).extract()
+        for disposition in dispositions_list:
             url = response.urljoin(disposition).replace("/txt.php", "/xml.php")
             yield scrapy.Request(url, callback=self.save_xml_disposition)
 
@@ -67,14 +70,22 @@ class BoeSpider(scrapy.Spider):
             # "seccion": response.xpath("//seccion/text()").get(),
             # "subseccion": response.xpath("//subseccion/text()").get(),
             # "departamento": response.xpath("//departamento/text()").get(),
-            "departamento_codigo": response.xpath("//departamento/@codigo").get(),
+            "departamento_codigo": response.xpath(
+                "//departamento/@codigo"
+            ).get(),
             # "rango": response.xpath("//rango/text()").get(),
             # "rango_codigo": response.xpath("//rango/@codigo").get(),
             # "numero_oficial": response.xpath("//numero_oficial/text()").get(),
-            "fecha_disposicion": response.xpath("//fecha_disposicion/text()").get(),
-            "fecha_publicacion": response.xpath("//fecha_publicacion/text()").get(),
+            "fecha_disposicion": response.xpath(
+                "//fecha_disposicion/text()"
+            ).get(),
+            "fecha_publicacion": response.xpath(
+                "//fecha_publicacion/text()"
+            ).get(),
             "fecha_vigencia": response.xpath("//fecha_vigencia/text()").get(),
-            "fecha_derogacion": response.xpath("//fecha_derogacion/text()").get(),
+            "fecha_derogacion": response.xpath(
+                "//fecha_derogacion/text()"
+            ).get(),
             # "letra_imagen": response.xpath("//letra_imagen/text()").get(),
             "pagina_inicial": response.xpath("//pagina_inicial/text()").get(),
             "pagina_final": response.xpath("//pagina_final/text()").get(),
@@ -102,16 +113,30 @@ class BoeSpider(scrapy.Spider):
                 "//judicialmente_anulada/text()"
             ).get(),
             # "vigencia_agotada": response.xpath("//vigencia_agotada/text()").get(),
-            "estatus_derogacion": response.xpath("//estatus_derogacion/text()").get(),
+            "estatus_derogacion": response.xpath(
+                "//estatus_derogacion/text()"
+            ).get(),
             "url_epub": response.xpath("//url_epub/text()").get(),
             "url_pdf": response.xpath("//url_pdf/text()").get(),
-            "url_pdf_catalan": response.xpath("//url_pdf_catalan/text()").get(),
-            "url_pdf_euskera": response.xpath("//url_pdf_euskera/text()").get(),
-            "url_pdf_gallego": response.xpath("//url_pdf_gallego/text()").get(),
-            "url_pdf_valenciano": response.xpath("//url_pdf_valenciano/text()").get(),
+            "url_pdf_catalan": response.xpath(
+                "//url_pdf_catalan/text()"
+            ).get(),
+            "url_pdf_euskera": response.xpath(
+                "//url_pdf_euskera/text()"
+            ).get(),
+            "url_pdf_gallego": response.xpath(
+                "//url_pdf_gallego/text()"
+            ).get(),
+            "url_pdf_valenciano": response.xpath(
+                "//url_pdf_valenciano/text()"
+            ).get(),
             "analisis_notas": response.xpath("//analisis/notas/text()").get(),
-            "analisis_materias": response.xpath("//analisis/materias/text()").get(),
-            "analisis_alertas": response.xpath("//analisis/alertas/text()").get(),
+            "analisis_materias": response.xpath(
+                "//analisis/materias/text()"
+            ).get(),
+            "analisis_alertas": response.xpath(
+                "//analisis/alertas/text()"
+            ).get(),
             "referencias_anteriores": response.xpath(
                 "//referencias/anteriores/text()"
             ).get(),
@@ -122,7 +147,6 @@ class BoeSpider(scrapy.Spider):
             "images": response.xpath("//img/@src").getall(),
         }
         disposition = BoeDispositionItem(**tags)
-        __import__('pdb').set_trace()
         yield disposition
         # # Add text with HTML tags removed
         # plain_text = [remove_tags(text, encoding="latin1") for text in tags["texto"]]
