@@ -1,3 +1,5 @@
+from sqlmodel import SQLModel
+from sqlmodel.main import Field
 from db.models.departamento import Departamento
 from sqlalchemy import Column, ForeignKey, String, Integer
 from sqlalchemy.orm import relationship
@@ -5,26 +7,24 @@ from sqlalchemy.sql.sqltypes import Boolean, Date, UnicodeText
 from db.database import Base
 
 
-class BoeDisposition(Base):
+class BoeDisposition(SQLModel):
 
-    __tablename__ = "boe_disposition"
-
-    # id = Column(Integer, primary_key=True, autoincrement="True")
-    fecha_actualizacion = Column(String)
-    identificador = Column(String, primary_key=True)
-    titulo = Column(String)
-    diario = Column(String)
-    diario_numero = Column(Integer)
+    id: int = Field(default=None, primary_key=True)
+    fecha_actualizacion : string,
+    identificador : string, primary_key=True,
+    titulo : string,
+    diario : string,
+    diario_numero : integer,
     # seccion = Column(Integer, ForeignKey("seccion.id"))
     # subseccion = Column(String, ForeignKey("subseccion.id"), nullable=True)
-    departamento_codigo = Column(
-        Integer, ForeignKey("departamento.departamento_codigo")
+    departamento_codigo: int = Field(
+        foreign_key="departamento.departamento_codigo"
     )
     # rango = Column(Integer, ForeignKey("rango.id"))
     # numero_oficial
-    fecha_disposicion = Column(Date)
-    fecha_publicacion = Column(Date)
-    fecha_vigencia = Column(Date)
+    fecha_disposicion : date,
+    fecha_publicacion : date,
+    fecha_vigencia : date,
     fecha_derogacion = Column(Date)
     # letra_imagen = Column(String, ForeignKey("subseccion.id"))
     pagina_inicial = Column(Integer)

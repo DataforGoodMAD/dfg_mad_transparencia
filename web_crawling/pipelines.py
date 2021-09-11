@@ -5,13 +5,18 @@
 
 
 # useful for handling different item types with a single interface
-from itemadapter import ItemAdapter
-from db.database import get_db, create_tables, engine
 
-create_tables()
+from db.database import create_db_and_tables, get_db_session
+
+# from models.boe_disposition import BoeDisposition
+from models.departamento import Departamento
+
+# Load database metadata before running any pipeline
+create_db_and_tables()
 
 
 class SaveToDBItemPipeline:
     def process_item(self, item, spider):
-        item.commit_item(engine=engine, excluded_fields=['id'])
-        return item
+        with get_db_session() as session:
+            session.add(item)
+            session.commit()

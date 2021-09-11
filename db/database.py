@@ -1,7 +1,9 @@
 import os
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlmodel import SQLModel, create_engine, Session
+from models import *
+
+# from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
 
 
@@ -14,23 +16,32 @@ engine = create_engine(
     client_encoding="utf8",
 )
 
-SessionLocal = sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    bind=engine,
-)
 
-Base = declarative_base()
+def create_db_and_tables(engine=engine):
+    SQLModel.metadata.create_all(engine)
 
 
-def create_tables():
-    return Base.metadata.create_all(bind=engine)
+# SessionLocal = sessionmaker(
+#     autocommit=False,
+#     autoflush=False,
+#     bind=engine,
+# )
+
+# Base = declarative_base()
+
+
+# def create_tables():
+#     return Base.metadata.create_all(bind=engine)
 
 
 @contextmanager
-def get_db():
-    db = SessionLocal()
+def get_db_session(engine=engine):
+    session = Session(engine)
     try:
-        yield db
+        yield session
     finally:
-        db.close()
+        session.close()
+
+
+if __name__ == "__main__":
+    create_db_and_tables()
