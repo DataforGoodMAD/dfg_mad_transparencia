@@ -3,8 +3,8 @@ import os
 
 from sqlmodel import SQLModel, Session, create_engine
 
-from models import *
-
+from models.boe_disposition import BoeDisposition
+from models.departamento import Departamento
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
@@ -24,5 +24,5 @@ def get_db_session(engine=engine):
         session.close()
 
 
-if __name__ == "__main__":
-    create_db_and_tables()
+# if __name__ == "__main__":
+#     create_db_and_tables()
