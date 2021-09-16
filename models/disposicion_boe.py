@@ -3,7 +3,7 @@ from sqlmodel import SQLModel, Field
 from datetime import datetime, date
 
 
-class BoeDisposition(SQLModel):
+class DisposicionBOE(SQLModel, table=True):
     boe_disposicion_id: str = Field(default=None, primary_key=True)
     fecha_actualizacion: datetime
     identificador: str
@@ -37,24 +37,24 @@ class BoeDisposition(SQLModel):
     texto: Optional[list[str]]
     imagenes: Optional[str]
 
-    # diario_id: Optional[str] = Field(
-    #     default=None, foreign_key="diario.diario_id"
-    # )
-    # seccion_id: str = Field(default=None, foreign_key="seccion.seccion_id")
-    # subseccion_id: Optional[str] = Field(
-    #     default=None, foreign_key="subseccion.subseccion_id"
-    # )
-    departamento_id: str = Field(
+    diario_id: Optional[str] = Field(
+        default=None, foreign_key="diario.diario_id"
+    )
+    seccion_id: str = Field(default=None, foreign_key="seccion.seccion_id")
+    subseccion_id: Optional[str] = Field(
+        default=None, foreign_key="subseccion.subseccion_id"
+    )
+    departamento_id: int = Field(
         default=None, foreign_key="departamento.departamento_id"
     )
-    # rango_id: Optional[str] = Field(default=None, foreign_key="rango.rango_id")
-    # estatus_legislativo_id: str = Field(
-    #     default=None, foreign_key="estatus_legislativo.estatus_legislativo_id"
-    # )
-    # origen_legislativo_id: Optional[str] = Field(
-    #     default=None, foreign_key="origen_legislativo.origen_legislativo_id"
-    # )
-    # estado_consolidacion_id: Optional[str] = Field(
-    #     default=None,
-    #     foreign_key="estado_consolidacion.estado_consolidacion_id",
-    # )
+    rango_id: Optional[str] = Field(default=None, foreign_key="rango.rango_id")
+    estatus_legislativo_id: str = Field(
+        default=None, foreign_key="estatus_legislativo.estatus_legislativo_id"
+    )
+    origen_legislativo_id: Optional[str] = Field(
+        default=None, foreign_key="origen_legislativo.origen_legislativo_id"
+    )
+    estado_consolidacion_id: Optional[str] = Field(
+        default=None,
+        foreign_key="estado_consolidacion.estado_consolidacion_id",
+    )

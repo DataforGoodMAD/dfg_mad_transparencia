@@ -3,9 +3,6 @@ import os
 
 from sqlmodel import SQLModel, Session, create_engine
 
-from models.boe_disposition import BoeDisposition
-from models.departamento import Departamento
-
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 engine = create_engine(DATABASE_URL, client_encoding="utf8", echo=True)

@@ -1,6 +1,14 @@
+from scrapy import Request, Spider
+
 from models.departamento import Departamento
-from models.boe_disposition import BoeDisposition
-from scrapy import Spider, Request
+from models.diario import Diario
+from models.disposicion_boe import DisposicionBOE
+from models.estado_consolidacion import EstadoConsolidacion
+from models.estatus_legislativo import EstatusLegislativo
+from models.origen_legislativo import OrigenLegislativo
+from models.rango import Rango
+from models.seccion import Seccion
+from models.subseccion import Subseccion
 
 # from w3lib.html import remove_tags
 
@@ -25,25 +33,57 @@ class BoeSpider(Spider):
         )
         yield departamento
 
-        # "estatus_legislativo": response.xpath(
-        #     "//estatus_legislativo/text()"
-        # ).get(),
-        # "origent_legislativo_id": response.xpath(
-        #     "//estatus_legislativo/@codigo"
-        # ).get(),
-        # "estado_consolidacion": response.xpath(
-        #     "//estado_consolidacion/text()"
-        # ).get(),
-        # "estado_consolidacion_codigo": response.xpath(
-        #     "//estado_consolidacion/@codigo"
-        # ).get(),
+        diario = Diario(
+            diario_id=response.xpath("//diario/@codigo").get(),
+            diario_codigo=response.xpath("//diario/@codigo").get(),
+            diario_nombre=response.xpath("//diario/text()").get(),
+        )
+        yield diario
 
-        # "origen_legislativo": response.xpath(
-        #         "//origen_legislativo/text()"
-        #     ).get(),
+        estado_consolidacion = EstadoConsolidacion(
+            estado_consolidacion_id=response.xpath(
+                "//estado_consolidacion/@codigo"
+            ).get(),
+            estado_consolidacion_codigo=response.xpath(
+                "//estado_consolidacion/@codigo"
+            ).get(),
+            estado_consolidacion_nombre=response.xpath(
+                "//estado_consolidacion/text()"
+            ).get(),
+        )
+        yield estado_consolidacion
 
-        tags = {}
-        disposicion = BoeDisposition(
+        estatus_legislativo = EstatusLegislativo(
+            estatus_legislativo_id=response.xpath(
+                "//estatus_legislativo/text()"
+            ).get(),
+            estatus_legislativo_codigo=response.xpath(
+                "//estatus_legislativo/text()"
+            ).get(),
+            estatus_legislativo_nombre=response.xpath(
+                "//estatus_legislativo/text()"
+            ).get(),
+        )
+        yield estatus_legislativo
+
+        origen_legislativo = OrigenLegislativo(
+            origen_legislativo_id=response.xpath(
+                "//origen_legislativo/@codigo"
+            ).get(),
+            origen_legislativo_codigo=response.xpath(
+                "//origen_legislativo/@codigo"
+            ).get(),
+            origen_legislativo_nombre=response.xpath(
+                "//origen_legislativo/text()"
+            ).get(),
+        )
+        yield origen_legislativo
+
+        # Rango
+        # Seccion
+        # Subseccion
+
+        disposicion_boe = DisposicionBOE(
             boe_disposicion_id=response.xpath("//identificador/text()").get(),
             fecha_actualizacion=response.xpath(
                 "//documento/@fecha_actualizacion"
@@ -116,4 +156,4 @@ class BoeSpider(Spider):
             #     "//estado_consolidacion/@codigo"
             # ).get(),
         )
-        yield disposicion
+        yield disposicion_boe
