@@ -79,9 +79,33 @@ class BoeSpider(Spider):
         )
         yield origen_legislativo
 
-        # Rango
-        # Seccion
-        # Subseccion
+        rango = Rango(
+            rango_id=response.xpath("//rango/@codigo").get(),
+            rango_codigo=response.xpath("//rango/@codigo").get(),
+            rango_nombre=response.xpath("//rango/text()").get(),
+        )
+        yield rango
+
+        rango = Rango(
+            rango_id=response.xpath("//rango/@codigo").get(),
+            rango_codigo=response.xpath("//rango/@codigo").get(),
+            rango_nombre=response.xpath("//rango/text()").get(),
+        )
+        yield rango
+
+        seccion = Seccion(
+            seccion_id=response.xpath("//seccion/text()").get(),
+            seccion_codigo=response.xpath("//seccion/text()").get(),
+            seccion_nombre=response.xpath("//seccion/text()").get(),
+        )
+        yield seccion
+
+        subseccion = Subseccion(
+            subseccion_id=response.xpath("//subseccion/text()").get(),
+            subseccion_codigo=response.xpath("//subseccion/text()").get(),
+            subseccion_nombre=response.xpath("//subseccion/text()").get(),
+        )
+        yield subseccion
 
         disposicion_boe = DisposicionBOE(
             boe_disposicion_id=response.xpath("//identificador/text()").get(),
@@ -140,20 +164,19 @@ class BoeSpider(Spider):
             ).get(),
             texto=response.xpath("//texto").getall(),
             images=response.xpath("//img/@src").getall(),
-            # "diario_id": response.xpath("//diario/@codigo").get()
-            # or response.xpath("//diario/text()").get(),
-            # "seccion_id": response.xpath("//seccion/text()").get(),
-            # "subseccion_id": response.xpath("//subseccion/text()").get(),
+            diario_id=response.xpath("//diario/@codigo").get(),
+            seccion_id=response.xpath("//seccion/text()").get(),
+            subseccion_id=response.xpath("//subseccion/text()").get(),
             departamento_id=response.xpath("//departamento/@codigo").get(),
-            # "rango_id": response.xpath("//rango/@codigo").get(),
-            # "estatus_legislativo_id": response.xpath(
-            #     "//estatus_legislativo/text()"
-            # ).get(),
-            # "origen_legislativo_id": response.xpath(
-            #     "//origen_legislativo/@codigo"
-            # ).get(),
-            # "estado_consolidacion_id": response.xpath(
-            #     "//estado_consolidacion/@codigo"
-            # ).get(),
+            rango_id=response.xpath("//rango/@codigo").get(),
+            estatus_legislativo_id=response.xpath(
+                "//estatus_legislativo/text()"
+            ).get(),
+            origen_legislativo_id=response.xpath(
+                "//origen_legislativo/@codigo"
+            ).get(),
+            estado_consolidacion_id=response.xpath(
+                "//estado_consolidacion/@codigo"
+            ).get(),
         )
         yield disposicion_boe

@@ -6,7 +6,7 @@
 
 # useful for handling different item types with a single interface
 
-from db.database import create_db_and_tables, engine, get_db_session
+from db.database import create_db_and_tables, get_db_session
 from models.departamento import Departamento
 from models.diario import Diario
 from models.disposicion_boe import DisposicionBOE
@@ -18,7 +18,7 @@ from models.seccion import Seccion
 from models.subseccion import Subseccion
 
 # Load database metadata before running any pipeline
-create_db_and_tables(engine=engine)
+create_db_and_tables()
 
 
 class SaveToDBItemPipeline:

@@ -9,7 +9,7 @@ engine = create_engine(DATABASE_URL, client_encoding="utf8", echo=True)
 
 
 def create_db_and_tables(engine=engine):
-    SQLModel.metadata.create_all(engine)
+    SQLModel.metadata.create_all(bind=engine)
 
 
 @contextmanager

@@ -44,17 +44,17 @@ class DisposicionBOE(SQLModel, table=True):
     subseccion_id: Optional[str] = Field(
         default=None, foreign_key="subseccion.subseccion_id"
     )
-    departamento_id: int = Field(
+    departamento_id: str = Field(
         default=None, foreign_key="departamento.departamento_id"
     )
     rango_id: Optional[str] = Field(default=None, foreign_key="rango.rango_id")
     estatus_legislativo_id: str = Field(
-        default=None, foreign_key="estatus_legislativo.estatus_legislativo_id"
+        default=None, foreign_key="estatuslegislativo.estatus_legislativo_id"
     )
     origen_legislativo_id: Optional[str] = Field(
-        default=None, foreign_key="origen_legislativo.origen_legislativo_id"
+        default=None, foreign_key="origenlegislativo.origen_legislativo_id"
     )
     estado_consolidacion_id: Optional[str] = Field(
         default=None,
-        foreign_key="estado_consolidacion.estado_consolidacion_id",
+        foreign_key="estadoconsolidacion.estado_consolidacion_id",
     )
