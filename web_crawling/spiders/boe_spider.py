@@ -1,5 +1,6 @@
 from scrapy import Request, Spider
 
+from models.epigrafe import Epigrafe
 from models.departamento import Departamento
 from models.diario import Diario
 from models.disposicion_boe import DisposicionBOE
@@ -15,17 +16,64 @@ from models.subseccion import Subseccion
 
 class BoeSpider(Spider):
     name = "boe_spider"
-    start_urls = ["https://boe.es/diario_boe/ultimo.php"]
+    _base_url = "https://boe.es"
 
-    def parse(self, response):
-        dispositions_list = response.css(
-            ".puntoHTML > a::attr('href')"
-        ).extract()
-        for disposition in dispositions_list:
-            url = response.urljoin(disposition).replace("/txt.php", "/xml.php")
-            yield Request(url, callback=self.save_xml_disposition)
+    def start_requests(self):
+        return [
+            Request(
+                "https://boe.es/diario_boe/ultimo.php",
+                callback=self.get_summary,
+            )
+        ]
 
-    def save_xml_disposition(self, response):
+    def get_summary(self, response):
+        link_sumario = response.css(
+            "div.linkSumario li.puntoXML a::attr(href)"
+        ).get()
+        return Request(
+            f"{self._base_url}{link_sumario}",
+            callback=self.process_epigrafes,
+        )
+
+        # dispositions_list = response.css(
+        #     ".puntoHTML > a::attr('href')"
+        # ).extract()
+        # for disposition in dispositions_list:
+        #     url = response.urljoin(disposition).replace("/txt.php", "/xml.php")
+        #     yield Request(url, callback=self.save_xml_disposition)
+
+    def _build_items_by_epigrafe(self, epigrafes_xml):
+        items_by_epigrafe = []
+        for epigrafe_xml in epigrafes_xml:
+            items = epigrafe_xml.xpath(".//item")
+            for item in items:
+                item_url = item.xpath(".//urlXml/text()").get()
+                items_by_epigrafe.append(
+                    {"url": item_url, "epigrafe": epigrafe_xml}
+                )
+        return items_by_epigrafe
+
+    def process_epigrafes(self, response):
+        epigrafes_xml = response.xpath("//epigrafe")
+        items_by_epigrafe = self._build_items_by_epigrafe(epigrafes_xml)
+        for item in items_by_epigrafe:
+            item_url = item["url"]
+            url = f"{self._base_url}{item_url}"
+            yield Request(
+                url,
+                callback=self.save_xml_disposition,
+                cb_kwargs=dict(epigrafe_xml=item["epigrafe"]),
+            )
+
+    def save_xml_disposition(self, response, epigrafe_xml):
+
+        epigrafe = Epigrafe(
+            epigrafe_id=epigrafe_xml.xpath("@nombre").get(),
+            epigrafe_codigo=epigrafe_xml.xpath("@nombre").get(),
+            epigrafe_nombre=epigrafe_xml.xpath("@nombre").get(),
+        )
+        yield epigrafe
+
         departamento = Departamento(
             departamento_id=response.xpath("//departamento/@codigo").get(),
             departamento_codigo=response.xpath("//departamento/@codigo").get(),
@@ -100,12 +148,13 @@ class BoeSpider(Spider):
         )
         yield seccion
 
-        subseccion = Subseccion(
-            subseccion_id=response.xpath("//subseccion/text()").get(),
-            subseccion_codigo=response.xpath("//subseccion/text()").get(),
-            subseccion_nombre=response.xpath("//subseccion/text()").get(),
-        )
-        yield subseccion
+        if response.xpath("//subseccion/text()").get():
+            subseccion = Subseccion(
+                subseccion_id=response.xpath("//subseccion/text()").get(),
+                subseccion_codigo=response.xpath("//subseccion/text()").get(),
+                subseccion_nombre=response.xpath("//subseccion/text()").get(),
+            )
+            yield subseccion
 
         disposicion_boe = DisposicionBOE(
             boe_disposicion_id=response.xpath("//identificador/text()").get(),
@@ -162,8 +211,9 @@ class BoeSpider(Spider):
             referencias_posteriores=response.xpath(
                 "//referencias/posteriores/text()"
             ).get(),
-            texto=response.xpath("//texto").getall(),
-            images=response.xpath("//img/@src").getall(),
+            texto=str(response.xpath("//texto").getall()),
+            images=str(response.xpath("//img/@src").getall()),
+            epigrafe_id=epigrafe_xml.xpath("@nombre").get(),
             diario_id=response.xpath("//diario/@codigo").get(),
             seccion_id=response.xpath("//seccion/text()").get(),
             subseccion_id=response.xpath("//subseccion/text()").get(),

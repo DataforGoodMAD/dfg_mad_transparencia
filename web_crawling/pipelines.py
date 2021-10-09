@@ -7,6 +7,7 @@
 # useful for handling different item types with a single interface
 
 from db.database import create_db_and_tables, get_db_session
+from models.epigrafe import Epigrafe
 from models.departamento import Departamento
 from models.diario import Diario
 from models.disposicion_boe import DisposicionBOE

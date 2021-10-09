@@ -34,9 +34,12 @@ class DisposicionBOE(SQLModel, table=True):
     analisis_alertas: Optional[str]
     referencias_anteriores: Optional[str]
     referencias_posteriores: Optional[str]
-    texto: Optional[list[str]]
+    texto: str = Field(max_length=999999, index=False)
     imagenes: Optional[str]
 
+    epigrafe_id: Optional[str] = Field(
+        default=None, foreign_key="epigrafe.epigrafe_id"
+    )
     diario_id: Optional[str] = Field(
         default=None, foreign_key="diario.diario_id"
     )

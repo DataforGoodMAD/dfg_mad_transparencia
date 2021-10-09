@@ -5,7 +5,7 @@ from sqlmodel import SQLModel, Session, create_engine
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
-engine = create_engine(DATABASE_URL, client_encoding="utf8", echo=True)
+engine = create_engine(DATABASE_URL, client_encoding="utf8", echo=False)
 
 
 def create_db_and_tables(engine=engine):
