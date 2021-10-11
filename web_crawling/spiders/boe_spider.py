@@ -1,4 +1,5 @@
 from scrapy import Request, Spider
+from scrapy.spiders import CrawlSpider
 
 from models.epigrafe import Epigrafe
 from models.departamento import Departamento
@@ -14,19 +15,12 @@ from models.subseccion import Subseccion
 # from w3lib.html import remove_tags
 
 
-class BoeSpider(Spider):
+class BoeSpider(CrawlSpider):
     name = "boe_spider"
+    start_urls = ["https://boe.es/diario_boe/ultimo.php"]
     _base_url = "https://boe.es"
 
-    def start_requests(self):
-        return [
-            Request(
-                "https://boe.es/diario_boe/ultimo.php",
-                callback=self.get_summary,
-            )
-        ]
-
-    def get_summary(self, response):
+    def parse_start_url(self, response):
         link_sumario = response.css(
             "div.linkSumario li.puntoXML a::attr(href)"
         ).get()
