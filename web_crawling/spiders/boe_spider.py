@@ -12,8 +12,6 @@ from models.rango import Rango
 from models.seccion import Seccion
 from models.subseccion import Subseccion
 
-# from w3lib.html import remove_tags
-
 
 class BoeSpider(CrawlSpider):
     name = "boe_spider"
@@ -28,13 +26,6 @@ class BoeSpider(CrawlSpider):
             f"{self._base_url}{link_sumario}",
             callback=self.process_epigrafes,
         )
-
-        # dispositions_list = response.css(
-        #     ".puntoHTML > a::attr('href')"
-        # ).extract()
-        # for disposition in dispositions_list:
-        #     url = response.urljoin(disposition).replace("/txt.php", "/xml.php")
-        #     yield Request(url, callback=self.save_xml_disposition)
 
     def _build_items_by_epigrafe(self, epigrafes_xml):
         items_by_epigrafe = []

@@ -1,9 +1,28 @@
 version: "3.8"
 
 services:
+  scrapyd:
+    build: .
+    command: scrapyd
+    ports:
+      - 6800
+    volumes:
+      - ./web_crawling/scrapyd.conf:/etc/scrapyd/
+      - ./data:/var/lib/scrapyd
+      - /usr/local/lib/python3.9/dist-packages
+    environment:
+      - ENVIRONMENT=dev
+      - TESTING=0
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/boe_dev
+      - DATABASE_TEST_URL=postgresql://postgres:postgres@db:5432/boe_test
+    depends_on:
+      - db
+
   scrapy:
     build: .
     command: bash
+    ports:
+      - 6800
     volumes:
       - .:/usr/src/app
     environment:
@@ -18,8 +37,10 @@ services:
     build:
       context: ./db
       dockerfile: Dockerfile
-    expose:
+    ports:
       - 5432
+    volumes:
+      - ./db:/usr/src/app
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
